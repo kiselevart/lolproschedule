@@ -1,71 +1,60 @@
+from parsers import *
+
 from flask import Flask, render_template
 import requests
-from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 # Flask app initialization
 app = Flask(__name__)
-
-# League dataclass
-@dataclass
-class League:
-    id: str
-    slug: str
-    name: str
-    region: str
-
-# Tournament dataclass
-@dataclass
-class Tournament:
-    id: str
-    slug: str
-    startDate: str
-    endDate: str
 
 # General data
 apiKey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
 baseUrl = 'https://esports-api.lolesports.com/persisted/gw/'
 headers = {'x-api-key': apiKey}
 
-# Function to get leagues data
 def get_leagues() -> List[League]:
     leaguesUrl = 'getLeagues?hl=en-US'
-    leaguesResponse = requests.get(baseUrl+leaguesUrl, headers=headers)
-
-    if leaguesResponse.status_code == 200:
-        raw_data = leaguesResponse.json()
-        
-        leagues: List[League] = [League(
-            id=league['id'],
-            slug=league['slug'],
-            name=league['name'],
-            region=league['region']
-        ) for league in raw_data['data']['leagues']]
-        
-        return leagues
-    else:
+    leaguesResponse = requests.get(baseUrl + leaguesUrl, headers=headers)
+    
+    if leaguesResponse.status_code != 200:
         return []
+
+    raw_data = leaguesResponse.json()
+    leagues_data = raw_data.get('data', {}).get('leagues', [])
+    
+    leagues = [parse_league(league) for league in leagues_data]
+    
+    return leagues
 
 def get_tournaments(leagueId: str) -> List[Tournament]:
     tournamentsUrl = f'getTournamentsForLeague?hl=en-US&leagueId={leagueId}'
     tournamentsResponse = requests.get(baseUrl + tournamentsUrl, headers=headers)
     
-    if tournamentsResponse.status_code == 200:
-        raw_data = tournamentsResponse.json()
-        leagues_data = raw_data.get('data', {}).get('leagues', [{}])
-        tournaments_data = leagues_data[0].get('tournaments', [])
-        
-        tournaments: List[Tournament] = [Tournament(
-            id=tournament['id'],
-            slug=tournament['slug'],
-            startDate=tournament['startDate'],
-            endDate=tournament['endDate']
-        ) for tournament in tournaments_data]
-        
-        return tournaments
+    if tournamentsResponse.status_code != 200:
+        return []
+
+    raw_data = tournamentsResponse.json()
+    leagues_data = raw_data.get('data', {}).get('leagues', [{}])
+    tournaments_data = leagues_data[0].get('tournaments', [])
     
-    # Return an empty list if something goes wrong
-    return []
+    tournaments = [parse_tournament(tournament) for tournament in tournaments_data]
+    
+    return tournaments
+
+def get_live() -> List[Event]:
+    liveUrl = 'getLive?hl=en-US'
+    liveResponse = requests.get(baseUrl + liveUrl, headers=headers)
+    
+    if liveResponse.status_code != 200:
+        return []
+
+    raw_data = liveResponse.json()
+    events_data = raw_data.get('data', {}).get('events', [])
+
+    events = [parse_event(event) for event in events_data]
+
+    return events
+
 
 # Flask route to render leagues
 @app.route('/')
