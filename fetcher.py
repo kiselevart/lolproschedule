@@ -46,18 +46,35 @@ def get_leagues() -> List[League]:
     else:
         return []
 
-def get_tournament(leagueId: str) -> List[Tournament]:
-    tournamentUrl = 'getTournamentsForLeague?hl=en-US?leagueId=' + leagueId
-    tournamentsResponse = requests.get(baseUrl+tournamentUrl, headers=headers)
-    print(tournamentsResponse.status_code)
+def get_tournaments(leagueId: str) -> List[Tournament]:
+    tournamentsUrl = f'getTournamentsForLeague?hl=en-US&leagueId={leagueId}'
+    tournamentsResponse = requests.get(baseUrl + tournamentsUrl, headers=headers)
+    
+    if tournamentsResponse.status_code == 200:
+        raw_data = tournamentsResponse.json()
+        leagues_data = raw_data.get('data', {}).get('leagues', [{}])
+        tournaments_data = leagues_data[0].get('tournaments', [])
+        
+        tournaments: List[Tournament] = [Tournament(
+            id=tournament['id'],
+            slug=tournament['slug'],
+            startDate=tournament['startDate'],
+            endDate=tournament['endDate']
+        ) for tournament in tournaments_data]
+        
+        return tournaments
+    
+    # Return an empty list if something goes wrong
+    return []
 
 # Flask route to render leagues
 @app.route('/')
 def index():
     leagues = get_leagues()
+    tournament = get_tournaments(98767991299243165)
+    print(tournament)
     return render_template('index.html', leagues=leagues)
 
-    tournament = get_tournament()
 
 if __name__ == '__main__':
     app.run(debug=True)
