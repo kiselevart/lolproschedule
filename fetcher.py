@@ -14,16 +14,26 @@ class League:
     name: str
     region: str
 
+# Tournament dataclass
+@dataclass
+class Tournament:
+    id: str
+    slug: str
+    startDate: str
+    endDate: str
+
+# General data
+apiKey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
+baseUrl = 'https://esports-api.lolesports.com/persisted/gw/'
+headers = {'x-api-key': apiKey}
+
 # Function to get leagues data
 def get_leagues() -> List[League]:
-    apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
-    url = 'https://esports-api.lolesports.com/persisted/gw/getLeagues?hl=en-US'
-    headers = {'x-api-key': apikey}
+    leaguesUrl = 'getLeagues?hl=en-US'
+    leaguesResponse = requests.get(baseUrl+leaguesUrl, headers=headers)
 
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        raw_data = response.json()
+    if leaguesResponse.status_code == 200:
+        raw_data = leaguesResponse.json()
         
         leagues: List[League] = [League(
             id=league['id'],
@@ -36,11 +46,18 @@ def get_leagues() -> List[League]:
     else:
         return []
 
+def get_tournament(leagueId: str) -> List[Tournament]:
+    tournamentUrl = 'getTournamentsForLeague?hl=en-US?leagueId=' + leagueId
+    tournamentsResponse = requests.get(baseUrl+tournamentUrl, headers=headers)
+    print(tournamentsResponse.status_code)
+
 # Flask route to render leagues
 @app.route('/')
 def index():
     leagues = get_leagues()
     return render_template('index.html', leagues=leagues)
+
+    tournament = get_tournament()
 
 if __name__ == '__main__':
     app.run(debug=True)
