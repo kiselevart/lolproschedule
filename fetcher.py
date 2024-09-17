@@ -71,9 +71,8 @@ def get_tournaments(leagueId: str) -> List[Tournament]:
 @app.route('/')
 def index():
     leagues = get_leagues()
-    tournament = get_tournaments(98767991299243165)
-    print(tournament)
-    return render_template('index.html', leagues=leagues)
+    tournaments = get_tournaments(98767991299243165)
+    return render_template('index.html', leagues=leagues, tournaments = tournaments)
 
 
 if __name__ == '__main__':

@@ -28,5 +28,26 @@
             {% endfor %}
         </tbody>
     </table>
+    <h1>Sample Tournament</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Slug</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tournament in tournaments %}
+            <tr>
+                <td>{{ tournament.id }}</td>
+                <td>{{ tournament.slug }}</td>
+                <td>{{ tournament.startDate }}</td>
+                <td>{{ tournament.endDate }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
