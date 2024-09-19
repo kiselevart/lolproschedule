@@ -59,12 +59,16 @@ def get_schedule() -> Schedule:
     return schedule 
 
 def get_upcoming_schedule(schedule) -> Schedule:
-    print(schedule.events)
+    upcoming_events = []
     for event in schedule.events:
-        print("FORLOOP")
-        print(event)
+        if event.state != 'completed':
+            upcoming_events.append(event)
 
-    
+    return Schedule(
+        updated=None,
+        events=upcoming_events,
+        pages=None
+    )
 
 # REWRITE
 # def get_live() -> List[Event]:
@@ -88,8 +92,9 @@ def get_upcoming_schedule(schedule) -> Schedule:
 def index():
     leagues = get_leagues()
     tournaments = get_tournaments(98767991299243165)
-    schedule = get_schedule()
-    return render_template('index.html', leagues=leagues, tournaments=tournaments, schedule=schedule)
+    full_schedule = get_schedule()
+    upcoming_schedule = get_upcoming_schedule(full_schedule)
+    return render_template('index.html', leagues=leagues, tournaments=tournaments, schedule=upcoming_schedule)
 
 
 if __name__ == '__main__':
