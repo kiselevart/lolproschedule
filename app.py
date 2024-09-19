@@ -53,25 +53,27 @@ def get_schedule() -> List[Event]:
 
     raw_data = scheduleResponse.json()
     schedule_data = raw_data.get('data', {}).get('schedule', [])
+    print(schedule_data)
 
     schedule = parse_schedule(schedule_data)
 
     return schedule 
 
-def get_live() -> List[Event]:
-    liveUrl = 'getLive?hl=en-US'
-    liveResponse = requests.get(baseUrl + liveUrl, headers=headers)
+# REWRITE
+# def get_live() -> List[Event]:
+#     liveUrl = 'getLive?hl=en-US'
+#     liveResponse = requests.get(baseUrl + liveUrl, headers=headers)
     
-    if liveResponse.status_code != 200:
-        print("getlive error")
-        return []
+#     if liveResponse.status_code != 200:
+#         print("getlive error")
+#         return []
 
-    raw_data = liveResponse.json()
-    events_data = raw_data.get('data', {}).get('events', [])
+#     raw_data = liveResponse.json()
+#     events_data = raw_data.get('data', {}).get('events', [])
 
-    events = [parse_event(event) for event in events_data]
+#     events = [parse_event(event) for event in events_data]
 
-    return events
+#     return events
 
 
 # Flask route to render leagues
@@ -80,8 +82,7 @@ def index():
     leagues = get_leagues()
     tournaments = get_tournaments(98767991299243165)
     schedule = get_schedule()
-    live = get_live()
-    return render_template('index.html', leagues=leagues, tournaments=tournaments, schedule=schedule, live=live)
+    return render_template('index.html', leagues=leagues, tournaments=tournaments, schedule=schedule)
 
 
 if __name__ == '__main__':
