@@ -43,7 +43,7 @@ def get_tournaments(leagueId: str) -> List[Tournament]:
     
     return tournaments
 
-def get_schedule() -> List[Event]:
+def get_schedule() -> Schedule:
     scheduleUrl = 'getSchedule?hl=en-US'
     scheduleResponse = requests.get(baseUrl + scheduleUrl, headers=headers)
 
@@ -53,11 +53,18 @@ def get_schedule() -> List[Event]:
 
     raw_data = scheduleResponse.json()
     schedule_data = raw_data.get('data', {}).get('schedule', [])
-    print(schedule_data)
 
     schedule = parse_schedule(schedule_data)
 
     return schedule 
+
+def get_upcoming_schedule(schedule) -> Schedule:
+    print(schedule.events)
+    for event in schedule.events:
+        print("FORLOOP")
+        print(event)
+
+    
 
 # REWRITE
 # def get_live() -> List[Event]:
