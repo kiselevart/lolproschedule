@@ -17,6 +17,7 @@ def get_leagues() -> List[League]:
     leaguesResponse = requests.get(baseUrl + leaguesUrl, headers=headers)
     
     if leaguesResponse.status_code != 200:
+        print("getleagues error")
         return []
 
     raw_data = leaguesResponse.json()
@@ -31,6 +32,7 @@ def get_tournaments(leagueId: str) -> List[Tournament]:
     tournamentsResponse = requests.get(baseUrl + tournamentsUrl, headers=headers)
     
     if tournamentsResponse.status_code != 200:
+        print("gettournaments error")
         return []
 
     raw_data = tournamentsResponse.json()
@@ -41,11 +43,27 @@ def get_tournaments(leagueId: str) -> List[Tournament]:
     
     return tournaments
 
+def get_schedule() -> List[Event]:
+    scheduleUrl = 'getSchedule?hl=en-US'
+    scheduleResponse = requests.get(baseUrl + scheduleUrl, headers=headers)
+
+    if scheduleResponse.status_code != 200:
+        print("getschedule error")
+        return[]
+
+    raw_data = scheduleResponse.json()
+    schedule_data = raw_data.get('data', {}).get('schedule', [])
+
+    schedule = parse_schedule(schedule_data)
+
+    return schedule 
+
 def get_live() -> List[Event]:
     liveUrl = 'getLive?hl=en-US'
     liveResponse = requests.get(baseUrl + liveUrl, headers=headers)
     
     if liveResponse.status_code != 200:
+        print("getlive error")
         return []
 
     raw_data = liveResponse.json()
@@ -61,7 +79,9 @@ def get_live() -> List[Event]:
 def index():
     leagues = get_leagues()
     tournaments = get_tournaments(98767991299243165)
-    return render_template('index.html', leagues=leagues, tournaments = tournaments)
+    schedule = get_schedule()
+    live = get_live()
+    return render_template('index.html', leagues=leagues, tournaments=tournaments, schedule=schedule, live=live)
 
 
 if __name__ == '__main__':

@@ -53,3 +53,14 @@ class Event:
     state: str
     match: Optional[Match] = None
     league: Optional[League] = None
+
+@dataclass
+class AppPages:
+    older: str
+    newer: str
+
+@dataclass
+class Schedule:
+    updated: str
+    events: List[Event]
+    pages: Optional[AppPages] = None

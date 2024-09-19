@@ -28,7 +28,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <h1>Sample Tournament</h1>
+    <h1>Sample Tournaments</h1>
     <table border="1">
         <thead>
             <tr>
@@ -45,6 +45,52 @@
                 <td>{{ tournament.slug }}</td>
                 <td>{{ tournament.startDate }}</td>
                 <td>{{ tournament.endDate }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h1>Schedule</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Start Time</th>
+                <th>Block Name</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tournament in tournaments %}
+            <tr>
+                <td>{{ schedule.id }}</td>
+                <td>{{ schedule.type }}</td>
+                <td>{{ schedule.startDate }}</td>
+                <td>{{ schedule.blockName }}</td>
+                <td>{{ schedule.state }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h1>Live Events</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Start Time</th>
+                <th>Block Name</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tournament in tournaments %}
+            <tr>
+                <td>{{ live.id }}</td>
+                <td>{{ live.type }}</td>
+                <td>{{ live.startDate }}</td>
+                <td>{{ live.blockName }}</td>
+                <td>{{ live.state }}</td>
             </tr>
             {% endfor %}
         </tbody>
